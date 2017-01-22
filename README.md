@@ -1,5 +1,3 @@
-Laboratorium Amazon Web Services
-==============================
+#Amazon Web Services Project
 
-Laboratorium 4 - Simple Storage System S3
---------------
+##by Dmytro Chebotasrkyi
