@@ -5,6 +5,7 @@ var S3Form = require("../s3post").S3Form;
 var AWS_CONFIG_FILE = "config.json";
 var POLICY_FILE = "policy.json";
 var INDEX_TEMPLATE = "index.ejs";
+var logger = require("../logger.js");
 
 
 var AWS = require('aws-sdk');
@@ -19,8 +20,7 @@ var task = function(request, callback){
 
 	//3. generate form fields for S3 POST
 	var s3Form = new S3Form(policy);
-	//4. get bucket name
-
+	
 	policy.getConditions().push({ "x-amz-meta-uploader": request.connection.remoteAddress });
 	hiddenFields = s3Form.generateS3FormFields();
 	hiddenFields = s3Form.addS3CredientalsFields(hiddenFields, awsConfig);
@@ -28,11 +28,15 @@ var task = function(request, callback){
 	var s3 = new AWS.S3();
 	var files = [];
 
+
+	logger.log("Hidden fields to S3 POST", hiddenFields);
+
 	s3.listObjects({Bucket: "lab4-weeia"}, 
 		function(err, data) {
 		  if (err) {
 		  	console.log(err, err.stack); // an error occurred
 
+			logger.log("Faild to obtain object list from S3", err.stack);
 		  	callback(null, {template: INDEX_TEMPLATE, params:{files: ["Faild to obtain file list"],
 				fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
 			}});
@@ -47,7 +51,8 @@ var task = function(request, callback){
 						files.push(name);
 				}
 			});
-
+			logger.log("Successfuly obtained object list from S3", data);
+		  	
 			if (files.length === 0) {
 				files.push("You have no files");
 			}
