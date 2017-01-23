@@ -2,6 +2,7 @@
 <head>
 	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
 </head>
 <body>
@@ -49,34 +50,69 @@
 		</section>
 
 		
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3>Your files</h3>
-				</div>
-				<div class="panel-body">
-					
-					<ul>
-						<% files.forEach(function(elem){ %>
-						<li type="hidden"> <%= elem.name %> </li>
-						<%}); %> 
-					</ul>
-
-				</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3>Your files</h3>
 			</div>
+			<div class="panel-body">
 
-			<button id="testBtn" onclick="sendClick">Test JS</button>
-			<script>
-			  testBtn.onclick = function() {
-			    $.ajax({
-				  method: "POST",
-				  url: "http://127.0.0.1:8080/sendFiles",
-				  data: { fileNames: "1,2,3,4,5,6,7,8,9,10"}
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Key</th>
+						</tr>
+					</thead>
+					<tbody id="files-table-body">
+						<% files.forEach(function(elem){ %>
+						<tr>
+							<td><%= elem.name %></td>
+							<td class="key"><%= elem.key %></td>
+							<td>
+								
+								<div class="checkbox">
+										<input type="checkbox" value="">
+								</div>
+
+							</td>
+						</tr>
+						<%}); %> 
+					</tbody>
+				</table>
+
+			</div>
+			<footer class="panel-footer">
+				<button id="testBtn" onclick="sendClick" class="btn btn-primary btn-block">Process selected files</button>
+		<script>
+			testBtn.onclick = function() {
+
+				var keys = "";
+				var checkboxes = $("#files-table-body").find("input");
+				var items = $("#files-table-body").find(".key");
+				console.log(items);
+
+				for (var i=0; i < checkboxes.length; i++){
+					if (checkboxes[i].checked) {
+						if (keys != "") {
+							keys += ",";
+						}
+						keys += items[i].innerText;
+					}
+				}
+
+				$.ajax({
+					method: "POST",
+					url: "http://127.0.0.1:8080/sendFiles",
+					data: { fileNames: keys}
 				})
 				.done(function( msg ) {
-				    console.log("Files was successfully sended");
-				  });
-			  };
-			</script>
+					console.log("Files was successfully sended");
+				});
+			};
+		</script>
+			</footer>
+		</div>
+
 	</div>		
 </body>
 </html>
