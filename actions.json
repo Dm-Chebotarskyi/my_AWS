@@ -1,3 +1,4 @@
 [
-	{"path":"/","action":"createform"}
+	{"path":"/","action":"createform"},
+	{"path":"/sendFiles","action":"processFiles"}
 ]

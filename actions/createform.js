@@ -29,14 +29,14 @@ var task = function(request, callback){
 	var files = [];
 
 
-	logger.log("Hidden fields to S3 POST", hiddenFields);
+	logger.log("Hidden fields to S3 POST", JSON.stringify(hiddenFields));
 
 	s3.listObjects({Bucket: "lab4-weeia"}, 
 		function(err, data) {
 		  if (err) {
 		  	console.log(err, err.stack); // an error occurred
 
-			logger.log("Faild to obtain object list from S3", err.stack);
+			logger.log("Faild to obtain object list from S3", JSON.stringify(err.stack));
 		  	callback(null, {template: INDEX_TEMPLATE, params:{files: ["Faild to obtain file list"],
 				fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
 			}});
@@ -47,11 +47,14 @@ var task = function(request, callback){
 			data.Contents.forEach( function(item) {
 				if (item.Key.startsWith("dmytro.chebotarskyi/")) {
 					var name = item.Key.substr(20);
-					if (! name == '')
-						files.push(name);
+					if (! name == '') {
+						var tmp = { key: item.Key, name: name};
+						files.push(tmp);
+						//files.push(name);
+					}
 				}
 			});
-			logger.log("Successfuly obtained object list from S3", data);
+			logger.log("Successfuly obtained object list from S3", JSON.stringify(data));
 		  	
 			if (files.length === 0) {
 				files.push("You have no files");
