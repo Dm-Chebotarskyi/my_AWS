@@ -4,6 +4,11 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
+<!-- 	<script>
+		setTimeout(function(){
+			window.location.reload(1);
+		}, 5000);
+	</script> -->
 </head>
 <body>
 	<nav class="navbar">
@@ -71,7 +76,7 @@
 							<td>
 								
 								<div class="checkbox">
-										<input type="checkbox" value="">
+									<input type="checkbox" value="">
 								</div>
 
 							</td>
@@ -83,33 +88,33 @@
 			</div>
 			<footer class="panel-footer">
 				<button id="testBtn" onclick="sendClick" class="btn btn-primary btn-block">Process selected files</button>
-		<script>
-			testBtn.onclick = function() {
+				<script>
+					testBtn.onclick = function() {
 
-				var keys = "";
-				var checkboxes = $("#files-table-body").find("input");
-				var items = $("#files-table-body").find(".key");
-				console.log(items);
+						var keys = "";
+						var checkboxes = $("#files-table-body").find("input");
+						var items = $("#files-table-body").find(".key");
+						console.log(items);
 
-				for (var i=0; i < checkboxes.length; i++){
-					if (checkboxes[i].checked) {
-						if (keys != "") {
-							keys += ",";
+						for (var i=0; i < checkboxes.length; i++){
+							if (checkboxes[i].checked) {
+								if (keys != "") {
+									keys += ",";
+								}
+								keys += items[i].innerText;
+							}
 						}
-						keys += items[i].innerText;
-					}
-				}
 
-				$.ajax({
-					method: "POST",
-					url: "http://127.0.0.1:8080/sendFiles",
-					data: { fileNames: keys}
-				})
-				.done(function( msg ) {
-					console.log("Files was successfully sended");
-				});
-			};
-		</script>
+						$.ajax({
+							method: "POST",
+							url: "http://127.0.0.1:8080/sendFiles",
+							data: { fileNames: keys}
+						})
+						.done(function( msg ) {
+							console.log("Files was successfully sended");
+						});
+					};
+				</script>
 			</footer>
 		</div>
 
