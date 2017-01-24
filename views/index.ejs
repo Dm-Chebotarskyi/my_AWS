@@ -4,11 +4,6 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
-<!-- 	<script>
-		setTimeout(function(){
-			window.location.reload(1);
-		}, 5000);
-	</script> -->
 </head>
 <body>
 	<nav class="navbar">
@@ -33,7 +28,7 @@
 						<div class="col-xs-5">
 							<div class="form-group">
 								<label for="exampleInputFile">File input</label>
-								<input type="file" name="file">
+								<input type="file" name="file" accept=".png">
 								<p class="help-block">File will be send to the bucket <%=bucket%> </p>
 							</div>
 
@@ -87,7 +82,7 @@
 
 			</div>
 			<footer class="panel-footer">
-				<button id="testBtn" onclick="sendClick" class="btn btn-primary btn-block">Process selected files</button>
+				<button id="testBtn" class="btn btn-primary btn-block">Process selected files</button>
 				<script>
 					testBtn.onclick = function() {
 
@@ -105,13 +100,18 @@
 							}
 						}
 
+						if ( keys != "") 
 						$.ajax({
 							method: "POST",
 							url: "http://127.0.0.1:8080/sendFiles",
 							data: { fileNames: keys}
 						})
 						.done(function( msg ) {
-							console.log("Files was successfully sended");
+							alert("Files was sent to processing");
+							console.log("Files was successfully sent");
+								setTimeout(function(){
+								window.location.reload(1);
+							}, 5000);
 						});
 					};
 				</script>

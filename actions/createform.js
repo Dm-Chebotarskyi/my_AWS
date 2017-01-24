@@ -50,15 +50,10 @@ var task = function(request, callback){
 					if (! name == '') {
 						var tmp = { key: item.Key, name: name};
 						files.push(tmp);
-						//files.push(name);
 					}
 				}
 			});
 			logger.log("Successfuly obtained object list from S3", JSON.stringify(data));
-		  	
-			if (files.length === 0) {
-				files.push("You have no files");
-			}
 
 			callback(null, {template: INDEX_TEMPLATE, params:{files:files,
 				fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
