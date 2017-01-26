@@ -4,14 +4,26 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
+	<script>
+		
+		$(document).on("click", ".clickable-row", function () {
+			var tds = $(this).find('td');
+			var link = tds[2].innerText;
+			var title = tds[0].innerText;
+			console.log(title);
+			$(".modal-body #image").attr('src',link);
+			$(".modal-header #title").text(title);
+		});
+
+	</script>
 </head>
 <body>
 	<nav class="navbar">
 
 	</nav>
 	<div class="container">
-		<section id="section1" class="panel panel-default">
 
+		<section id="section1" class="panel panel-default">
 			<div class="panel-heading">
 				<div class="container">
 					<h3 class="panel-title">POSTing a file to Amazon S3</h3>
@@ -65,9 +77,10 @@
 					</thead>
 					<tbody id="files-table-body">
 						<% files.forEach(function(elem){ %>
-						<tr>
+						<tr class="clickable-row" data-toggle="modal" data-target="#imgModal" >
 							<td><%= elem.name %></td>
 							<td class="key"><%= elem.key %></td>
+							<td class="url hidden"><%= elem.url %></td>
 							<td>
 								
 								<div class="checkbox">
@@ -101,15 +114,15 @@
 						}
 
 						if ( keys != "") 
-						$.ajax({
-							method: "POST",
-							url: "http://127.0.0.1:8080/sendFiles",
-							data: { fileNames: keys}
-						})
+							$.ajax({
+								method: "POST",
+								url: "http://127.0.0.1:8080/sendFiles",
+								data: { fileNames: keys}
+							})
 						.done(function( msg ) {
 							alert("Files was sent to processing");
 							console.log("Files was successfully sent");
-								setTimeout(function(){
+							setTimeout(function(){
 								window.location.reload(1);
 							}, 5000);
 						});
@@ -118,6 +131,28 @@
 			</footer>
 		</div>
 
-	</div>		
+	</div>	
+
+	<!-- Modal -->
+	<div id="imgModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 id="title" class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+					<img id="image" src="" alt="image" style="width: 400px; height: 264px;" class="img-responsive">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
 </body>
 </html>

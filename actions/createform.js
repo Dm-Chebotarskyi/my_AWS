@@ -22,44 +22,46 @@ var task = function(request, callback){
 	var s3Form = new S3Form(policy);
 	
 	policy.getConditions().push({ "x-amz-meta-uploader": request.connection.remoteAddress });
+	policy.getConditions().push({"success_action_redirect": "http://127.0.0.1:8080"});
 	hiddenFields = s3Form.generateS3FormFields();
 	hiddenFields = s3Form.addS3CredientalsFields(hiddenFields, awsConfig);
 
 	var s3 = new AWS.S3();
 	var files = [];
 
-
 	logger.log("Hidden fields to S3 POST", JSON.stringify(hiddenFields));
 
 	s3.listObjects({Bucket: "lab4-weeia"}, 
 		function(err, data) {
-		  if (err) {
+			if (err) {
 		  	console.log(err, err.stack); // an error occurred
 
-			logger.log("Faild to obtain object list from S3", JSON.stringify(err.stack));
+		  	logger.log("Faild to obtain object list from S3", JSON.stringify(err.stack));
 		  	callback(null, {template: INDEX_TEMPLATE, params:{files: ["Faild to obtain file list"],
-				fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
-			}});
+		  		fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
+		  	}});
 
 		  } else {
 		  	console.log("Successfuly obtainted objects list");
 
-			data.Contents.forEach( function(item) {
-				if (item.Key.startsWith("dmytro.chebotarskyi/")) {
-					var name = item.Key.substr(20);
-					if (! name == '') {
-						var tmp = { key: item.Key, name: name};
+		  	data.Contents.forEach( function(item) {
+		  		if (item.Key.startsWith("dmytro.chebotarskyi/")) {
+		  			var name = item.Key.substr(20);
+		  			if (! name == '') {
+		  				var params = {Bucket: 'lab4-weeia', Key: item.Key};
+		  				var url = s3.getSignedUrl('getObject', params);
+		  				var tmp = { key: item.Key, name: name, url: url};
 						files.push(tmp);
-					}
-				}
-			});
-			logger.log("Successfuly obtained object list from S3", JSON.stringify(data));
-
-			callback(null, {template: INDEX_TEMPLATE, params:{files:files,
-				fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
-			}});
+		  			}
+		  		}
+		  	});
+		  	logger.log("Successfuly obtained object list from S3", JSON.stringify(data));
+		  	console.log("files: " + files);
+		  	callback(null, {template: INDEX_TEMPLATE, params:{files:files,
+		  		fields:hiddenFields, bucket:policy.getConditionValueByKey("bucket")
+		  	}});
 		  }           
-	});
+		});
 
 }
 

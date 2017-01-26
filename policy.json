@@ -1,8 +1,7 @@
 {	"expiration" : {"day":1},
 	"conditions": [ ["starts-with", "$key", "dmytro.chebotarskyi/"],
     				 {"bucket": "lab4-weeia"}, 
-    				 {"acl": "private"},
-    				 {"success_action_redirect": "http://127.0.0.1:8080"},   
+    				 {"acl": "private"},   
     				 ["content-length-range", 0, 1048576]
     				]   
 }
